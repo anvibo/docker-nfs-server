@@ -88,7 +88,7 @@ spec:
       }
     }
     //push dev image
-    stage('Push development image') {
+    stage('Push gcsfuse development image') {
       steps{
         container('docker') {
                 withDockerRegistry(registry: [credentialsId: 'dockerhub']) {
@@ -101,7 +101,7 @@ spec:
       }
     }
     //push release image
-    stage('Push release image') {
+    stage('Push gcsfuse release image') {
       when { tag "v*" }
       steps{
         container('docker') {
