@@ -87,7 +87,6 @@ spec:
             }
       }
     }
-
     //push dev image
     stage('Push development image') {
       steps{
