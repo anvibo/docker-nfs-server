@@ -34,6 +34,7 @@ spec:
         git 'https://github.com/anvibo/docker-nfs-server.git'
       }
     }
+    //build image
     stage('Build image' ) {
       steps{
         container('docker') {
@@ -45,6 +46,7 @@ spec:
             }
       }
     }
+    //push dev image
     stage('Push development image') {
       steps{
         container('docker') {
@@ -57,6 +59,7 @@ spec:
             }
       }
     }
+    //push release image
     stage('Push release image') {
       when { tag "v*" }
       steps{
@@ -72,6 +75,49 @@ spec:
             }
       }
     }
+    //build image
+    stage('Build gcsfuse image' ) {
+      steps{
+        container('docker') {
+                withDockerRegistry(registry: [credentialsId: 'dockerhub']) {
+                  script {
+                    dockerImage = docker.build(registry, "-f gcsfuse/Dockerfile .")
+                  }
+                }
+            }
+      }
+    }
+
+    //push dev image
+    stage('Push development image') {
+      steps{
+        container('docker') {
+                withDockerRegistry(registry: [credentialsId: 'dockerhub']) {
+                  script {
+                    dockerImage.push("gcsfuse-dev")
+                    sh "docker rmi $registry:gcsfuse-dev"
+                  }
+                }
+            }
+      }
+    }
+    //push release image
+    stage('Push release image') {
+      when { tag "v*" }
+      steps{
+        container('docker') {
+                withDockerRegistry(registry: [credentialsId: 'dockerhub']) {
+                  script {
+                    dockerImage.push("gcsfuse")
+                    dockerImage.push("gvsfuse-$TAG_NAME")
+                    sh "docker rmi $registry:gcsfuse-$TAG_NAME"
+                    sh "docker rmi $registry:gcsfuse"
+                  }
+                }
+            }
+      }
+    }
+
 
   }
 }
