@@ -10,6 +10,7 @@ RUN set -x && \
     mkdir /exports
 
 RUN echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main"| tee /etc/apt/sources.list.d/gcsfuse.list
+
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
 RUN apt-get -q update && apt-get -qq -y install --no-install-recommends gcsfuse \
@@ -18,6 +19,7 @@ RUN apt-get -q update && apt-get -qq -y install --no-install-recommends gcsfuse 
     && rm -r /var/lib/apt/lists/*
 
 COPY docker-entrypoint.sh /usr/local/bin/
+
 RUN chmod +rx /usr/local/bin/docker-entrypoint.sh
 
 VOLUME /exports
